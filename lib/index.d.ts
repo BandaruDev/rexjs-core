@@ -1,1 +1,1 @@
-export declare function AppName(): void;
+export * from './public_api';
