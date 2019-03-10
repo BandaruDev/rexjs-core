@@ -1,4 +1,3 @@
-
 const webpackOutputOptions = {
   colors: true,
   hash: true, // required by custom stat output
@@ -32,7 +31,5 @@ const verboseWebpackOutputOptions = {
 };
 
 export function getWebpackStatsConfig(verbose = false) {
-  return verbose
-    ? Object.assign(webpackOutputOptions, verboseWebpackOutputOptions)
-    : webpackOutputOptions;
+  return verbose ? Object.assign(webpackOutputOptions, verboseWebpackOutputOptions) : webpackOutputOptions;
 }

@@ -1,10 +1,9 @@
-
 import path, { resolve } from 'path';
 import webpack, { HashedModuleIdsPlugin, ProgressPlugin, RuleSetRule } from 'webpack';
 
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
-import HtmlWebpackPlugin, { MinifyOptions, Options} from 'html-webpack-plugin';
+import HtmlWebpackPlugin, { MinifyOptions, Options } from 'html-webpack-plugin';
 import MiniExtractCssPlugin from 'mini-css-extract-plugin';
 import TerserPlugin, { TerserPluginOptions } from 'terser-webpack-plugin';
 
@@ -17,7 +16,6 @@ import { InlineCssPlugin } from '../plugins/rex-plugins/inline-css-plugin';
 
 import { RexLoaders } from '../loaders';
 import { RexPlugins } from '../plugins';
-
 
 // const LicenseWebpackPlugin = require('license-webpack-plugin').LicenseWebpackPlugin;
 // const SubresourceIntegrityPlugin = require('webpack-subresource-integrity');
@@ -32,32 +30,32 @@ export const tsconfig = resolve('tsconfig.json');
  * The main configuration
  */
 export function webpack_bundler(rexbuildoptions: RexBuildOptions): webpack.Configuration {
- const { configuration, project , version } = rexbuildoptions;
- const { root, sourceRoot } = project;
- const {
-   index,
-   main,
-   outputPath,
-   styleext,
-   pwa,
-   styles,
-   scripts,
-   assets,
-   progress,
-   extractCss,
-   externals,
-   svgOptions,
-   optimization,
-   buildOptimizer,
-   outputHashing
- } = configuration;
+  const { configuration, project, version } = rexbuildoptions;
+  const { root, sourceRoot } = project;
+  const {
+    index,
+    main,
+    outputPath,
+    styleext,
+    pwa,
+    styles,
+    scripts,
+    assets,
+    progress,
+    extractCss,
+    externals,
+    svgOptions,
+    optimization,
+    buildOptimizer,
+    outputHashing,
+  } = configuration;
 
   const entryPoints: { [key: string]: string[] } = {};
 
   const favicon = resolve(root, `${sourceRoot}/favicon.ico`);
   // determine hashing format
   const hashFormat = outputHashing || 'none';
-  
+
   const HtmlMinifyOptions: MinifyOptions = {
     removeComments: true,
     collapseWhitespace: true,
@@ -69,46 +67,41 @@ export function webpack_bundler(rexbuildoptions: RexBuildOptions): webpack.Confi
     minifyJS: true,
     minifyCSS: true,
     minifyURLs: true,
-};
+  };
   const HtmlPluginOptions: Options = {
     template: resolve(root, index),
     inject: true,
     favicon,
     meta: {
-      'viewport': 'width=device-width, initial-scale=1, shrink-to-fit=no',
+      viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no',
       // Will generate: <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
       'theme-color': '#4285f4',
       // Will generate: <meta name="theme-color" content="#4285f4">
       // see  https://developers.google.com/web/fundamentals/security/csp/
       'Content-Security-Policy': {
         'http-equiv': 'Content-Security-Policy',
-        'content': `default-src 'self' https://* ;script-src 'self' https://* ;connect-src 'self';img-src 'self' https://*;media-src 'self' https://*;
-         style-src 'self' 'unsafe-inline';`
+        content: `default-src 'self' https://* ;script-src 'self' https://* ;connect-src 'self';img-src 'self' https://*;media-src 'self' https://*;
+         style-src 'self' 'unsafe-inline';`,
       },
-      
+
       // Will generate: <meta http-equiv="Content-Security-Policy" content="default-src https:">
       // Which equals to the following http header: `Content-Security-Policy: default-src https:`
       // 'set-cookie': { 'http-equiv': 'set-cookie', content: 'name=value; expires=date; path=url' },
       // Will generate: <meta http-equiv="set-cookie" content="value; expires=date; path=url">
       // Which equals to the following http header: `set-cookie: value; expires=date; path=url`
     },
-    minify: HtmlMinifyOptions
+    minify: HtmlMinifyOptions,
   };
 
-
-  RexPlugins.push(
-    new HtmlWebpackPlugin(HtmlPluginOptions),
-  );
+  RexPlugins.push(new HtmlWebpackPlugin(HtmlPluginOptions));
   if (main) {
     // entryPoints['wds'] = ['webpack-dev-server/client?http://localhost:8080'];
     // entryPoints['hot'] =['webpack/hot/only-dev-server']
     entryPoints.main = [resolve(root, main)];
-  };
+  }
   if (styles) {
-    styles.map(style =>
-      entryPoints.styles = [resolve(root, style)]
-    );
-  };
+    styles.map(style => (entryPoints.styles = [resolve(root, style)]));
+  }
   if (assets) {
     assets.forEach(asset => {
       // Resolve input paths relative to workspace root and add slash at the end.
@@ -122,40 +115,41 @@ export function webpack_bundler(rexbuildoptions: RexBuildOptions): webpack.Confi
       }
       let AssetsPlugin: webpack.Plugin;
       AssetsPlugin = new CopyWebpackPlugin(
-        [{
-          from: asset,
-          to: 'assets',
-        }],
-        { ignore: ['.gitkeep', '**/.DS_Store', '**/Thumbs.db'] }
+        [
+          {
+            from: asset,
+            to: 'assets',
+          },
+        ],
+        { ignore: ['.gitkeep', '**/.DS_Store', '**/Thumbs.db'] },
       );
       RexPlugins.push(AssetsPlugin);
-    })
-  };
+    });
+  }
   if (progress) {
     RexPlugins.push(new ProgressPlugin());
-  };
+  }
   if (extractCss) {
-    RexPlugins.push(new MiniExtractCssPlugin({
-      // Options similar to the same options in webpackOptions.output
-      // both options are optional
-      filename: inDevelopment ? '[name].css' : '[name].[hash].css',
-      chunkFilename: inDevelopment ? '[id].css' : '[id].[hash].css',
-    }))
-  };
+    RexPlugins.push(
+      new MiniExtractCssPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
+        filename: inDevelopment ? '[name].css' : '[name].[hash].css',
+        chunkFilename: inDevelopment ? '[id].css' : '[id].[hash].css',
+      }),
+    );
+  }
   if (scripts.length > 0) {
-    RexPlugins.push(new ScriptsWebpackPlugin(
-      {
-        scripts
-      }
-    ))
+    RexPlugins.push(
+      new ScriptsWebpackPlugin({
+        scripts,
+      }),
+    );
   }
   if (externals) {
-    RexPlugins.push(
-      new HtmlExternalsPlugin(externals))
-  };
-  RexPlugins.push(
-    new ReplaceUrlHtmlWebpackPlugin()
-  );
+    RexPlugins.push(new HtmlExternalsPlugin(externals));
+  }
+  RexPlugins.push(new ReplaceUrlHtmlWebpackPlugin());
   // if (subresourceIntegrity) {
   //   RexPlugins.push(new SubresourceIntegrityPlugin({
   //     hashFuncNames: ['sha384'],
@@ -171,16 +165,14 @@ export function webpack_bundler(rexbuildoptions: RexBuildOptions): webpack.Confi
   //   }));
   // }
   RexPlugins.push(
-    new InlineCssPlugin(),//   new AuthorPlugin({ app_name: 'My-App' })
-    new ForkTsCheckerWebpackPlugin()
+    new InlineCssPlugin(), //   new AuthorPlugin({ app_name: 'My-App' })
+    new ForkTsCheckerWebpackPlugin(),
   );
   // ****************** END OF PLUGINS **************** //
   // ****************** START MINIMIZERS ************** //
   const RexMinimizers: any[] = [];
   if (optimization) {
-    const terserOptions: TerserPluginOptions = {
-
-    };
+    const terserOptions: TerserPluginOptions = {};
     RexMinimizers.push(
       new TerserPlugin({
         sourceMap: true,
@@ -188,29 +180,28 @@ export function webpack_bundler(rexbuildoptions: RexBuildOptions): webpack.Confi
         cache: true,
         terserOptions,
       }),
-    )
-  };
+    );
+  }
   // ****************** END OF MINIMIZERS ************* //
   // ****************** START LOADERS ***************** //
   const SVGO_LOADER: RuleSetRule = {};
   const FILE_LOADER: RuleSetRule = {
-        test: /\.(eot|svg|cur|jpg|png|webp|gif|ico|otf|ttf|woff|woff2|ani)$/,
-        exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-        loader: 'file-loader',
-        options: {
-            name: `[name]${hashFormat}.[ext]`,
-        },
-};
-// **** DO NOT PUSH ANY LOADER AFTER THE FILE LAODER *** //
-if(svgOptions){
+    test: /\.(eot|svg|cur|jpg|png|webp|gif|ico|otf|ttf|woff|woff2|ani)$/,
+    exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+    loader: 'file-loader',
+    options: {
+      name: `[name]${hashFormat}.[ext]`,
+    },
+  };
+  // **** DO NOT PUSH ANY LOADER AFTER THE FILE LAODER *** //
+  if (svgOptions) {
     const { optimize, useInline, useSprite } = svgOptions;
-};
-// if(pwa){
+  }
+  // if(pwa){
 
-// };
-RexLoaders.push(FILE_LOADER);
-// ****************** END LOADERS ***************** //
-
+  // };
+  RexLoaders.push(FILE_LOADER);
+  // ****************** END LOADERS ***************** //
 
   return {
     name: '',
@@ -222,7 +213,7 @@ RexLoaders.push(FILE_LOADER);
     entry: entryPoints,
     output: {
       path: resolve(outputPath),
-      filename: '[name].js'
+      filename: '[name].js',
     },
     watch: true,
     watchOptions: {
@@ -238,22 +229,22 @@ RexLoaders.push(FILE_LOADER);
     },
     module: {
       rules: RexLoaders.filter(Boolean),
-        // preloaders first
-        // setPreloaders(linting),
-        // {
-        //     test: /\.(js|jsx|mjs|web|)$/,
-        //     use: 'babel-loader',
-        //     options: {
-        //         presets: [
-        //             [require('@babel/preset-env')],
-        //             [require('@babel/preset-react'),
-        //             { development: process.env.BABEL_ENV === "development" }
-        //             ],
-        //             [require('@babel/preset-typescript')],
-        //         ]
-        //     },
-        //     exclude: /node_modules/
-        // },
+      // preloaders first
+      // setPreloaders(linting),
+      // {
+      //     test: /\.(js|jsx|mjs|web|)$/,
+      //     use: 'babel-loader',
+      //     options: {
+      //         presets: [
+      //             [require('@babel/preset-env')],
+      //             [require('@babel/preset-react'),
+      //             { development: process.env.BABEL_ENV === "development" }
+      //             ],
+      //             [require('@babel/preset-typescript')],
+      //         ]
+      //     },
+      //     exclude: /node_modules/
+      // },
     },
     optimization: {
       runtimeChunk: 'single',
@@ -263,14 +254,14 @@ RexLoaders.push(FILE_LOADER);
             name: 'styles',
             test: /\.css$/,
             chunks: 'all',
-            enforce: true
+            enforce: true,
           },
           vendor: {
             test: /[\\\/]node_modules[\\\/]/,
             name: 'vendors',
-            chunks: 'all'
-          }
-        }
+            chunks: 'all',
+          },
+        },
       },
       noEmitOnErrors: true,
       minimizer: [
@@ -278,7 +269,7 @@ RexLoaders.push(FILE_LOADER);
         new TerserPlugin({
           test: /\.js(\?.*)?$/i,
           parallel: 4,
-          chunkFilter: (chunk) => {
+          chunkFilter: chunk => {
             // Exclude uglification for the `vendor` chunk
             if (chunk.name === 'vendor') {
               return false;
@@ -288,7 +279,7 @@ RexLoaders.push(FILE_LOADER);
           terserOptions: {
             ecma: 5,
             warnings: false,
-            
+
             parse: {
               html5_comments: true,
             },
@@ -305,7 +296,7 @@ RexLoaders.push(FILE_LOADER);
             keep_classnames: undefined,
             keep_fnames: false,
             safari10: false,
-          }
+          },
         }),
         // TODO: check with Mike what this feature needs.
         // new BundleBudgetPlugin({ budgets: buildOptions.budgets }),
@@ -320,5 +311,5 @@ RexLoaders.push(FILE_LOADER);
       tls: 'empty',
       child_process: 'empty',
     },
-  }
+  };
 }

@@ -7,9 +7,9 @@
  */
 
 export function defaultProgress(progress: boolean | undefined): boolean {
-    if (progress === undefined) {
-      return process.stdout.isTTY === true;
-    }
-  
-    return progress;
+  if (progress === undefined) {
+    return process.stdout.isTTY === true;
   }
+
+  return progress;
+}

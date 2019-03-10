@@ -13,8 +13,7 @@ export interface RemoveHashPluginOptions {
 }
 
 export class RemoveHashPlugin {
-
-  constructor(private options: RemoveHashPluginOptions) { }
+  constructor(private options: RemoveHashPluginOptions) {}
 
   public apply(compiler: Compiler): void {
     compiler.hooks.compilation.tap('remove-hash-plugin', compilations => {
@@ -22,21 +21,17 @@ export class RemoveHashPlugin {
         hooks: compilation.CompilationHooks;
       };
 
-      mainTemplate.hooks.assetPath.tap('remove-hash-plugin',
-        (path: string, data: { chunk?: { name: string } }) => {
-          const chunkName = data.chunk && data.chunk.name;
-          const { chunkNames, hashFormat } = this.options;
+      mainTemplate.hooks.assetPath.tap('remove-hash-plugin', (path: string, data: { chunk?: { name: string } }) => {
+        const chunkName = data.chunk && data.chunk.name;
+        const { chunkNames, hashFormat } = this.options;
 
-          if (chunkName && chunkNames.includes(chunkName)) {
-            // Replace hash formats with empty strings.
-            return path
-              .replace(hashFormat.chunk, '')
-              .replace(hashFormat.extract, '');
-          }
+        if (chunkName && chunkNames.includes(chunkName)) {
+          // Replace hash formats with empty strings.
+          return path.replace(hashFormat.chunk, '').replace(hashFormat.extract, '');
+        }
 
-          return path;
-        },
-      );
+        return path;
+      });
     });
   }
 }

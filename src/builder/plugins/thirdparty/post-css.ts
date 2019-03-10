@@ -13,7 +13,7 @@ import webpack from 'webpack';
 
 function wrapUrl(urls: string): string {
   let wrappedUrl;
-  const hasSingleQuotes = urls.indexOf('\'') >= 0;
+  const hasSingleQuotes = urls.indexOf("'") >= 0;
 
   if (hasSingleQuotes) {
     wrappedUrl = `"${urls}"`;
@@ -36,17 +36,10 @@ async function resolve(
 }
 
 export default postcss.plugin<ResourcesPlugin.PostcssCliResourcesOptions>('postcss-cli-resources', options => {
-
   if (!options) {
     throw new Error(`missing required configuration`);
   }
-  const {
-    deployUrl = '',
-    baseHref = '',
-    resourcesOutputPath = '',
-    filename,
-    loader,
-  } = options;
+  const { deployUrl = '', baseHref = '', resourcesOutputPath = '', filename, loader } = options;
 
   const dedupeSlashes = (urls: string) => urls.replace(/\/\/+/g, '/');
 
@@ -91,16 +84,17 @@ export default postcss.plugin<ResourcesPlugin.PostcssCliResourcesOptions>('postc
     }
 
     const { pathname, hash, search } = url.parse(inputUrl.replace(/\\/g, '/'));
-    const resolver = (file: string, base: string) => new Promise<string>((resolves, reject) => {
-      loader.resolve(base, file, (err, results) => {
-        if (err) {
-          reject(err);
+    const resolver = (file: string, base: string) =>
+      new Promise<string>((resolves, reject) => {
+        loader.resolve(base, file, (err, results) => {
+          if (err) {
+            reject(err);
 
-          return;
-        }
-        resolves(result);
+            return;
+          }
+          resolves(result);
+        });
       });
-    });
 
     const result = await resolve(pathname as string, context, resolver);
 
@@ -112,11 +106,9 @@ export default postcss.plugin<ResourcesPlugin.PostcssCliResourcesOptions>('postc
           return;
         }
 
-        let outputPath = interpolateName(
-          { resourcePath: result } as webpack.loader.LoaderContext,
-          filename,
-          { content },
-        );
+        let outputPath = interpolateName({ resourcePath: result } as webpack.loader.LoaderContext, filename, {
+          content,
+        });
 
         if (resourcesOutputPath) {
           outputPath = path.posix.join(resourcesOutputPath, outputPath);
@@ -140,7 +132,7 @@ export default postcss.plugin<ResourcesPlugin.PostcssCliResourcesOptions>('postc
     });
   };
 
-  return (root) => {
+  return root => {
     const urlDeclarations: postcss.Declaration[] = [];
     root.walkDecls(decl => {
       if (decl.value && decl.value.includes('url')) {
@@ -154,52 +146,54 @@ export default postcss.plugin<ResourcesPlugin.PostcssCliResourcesOptions>('postc
 
     const resourceCache = new Map<string, string>();
 
-    return Promise.all(urlDeclarations.map(async decl => {
-      const value = decl.value;
-      const urlRegex = /url\(\s*(?:"([^"]+)"|'([^']+)'|(.+?))\s*\)/g;
-      const segments: string[] = [];
+    return Promise.all(
+      urlDeclarations.map(async decl => {
+        const value = decl.value;
+        const urlRegex = /url\(\s*(?:"([^"]+)"|'([^']+)'|(.+?))\s*\)/g;
+        const segments: string[] = [];
 
-      let match;
-      let lastIndex = 0;
-      let modified = false;
+        let match;
+        let lastIndex = 0;
+        let modified = false;
 
-      // We want to load it relative to the file that imports
-      const inputFile = decl.source && decl.source.input.file;
-      const context = inputFile && path.dirname(inputFile) || loader.context;
+        // We want to load it relative to the file that imports
+        const inputFile = decl.source && decl.source.input.file;
+        const context = (inputFile && path.dirname(inputFile)) || loader.context;
 
-      // tslint:disable-next-line:no-conditional-assignment
-      while (match = urlRegex.exec(value)) {
-        const originalUrl = match[1] || match[2] || match[3];
-        let processedUrl;
-        try {
-          processedUrl = await process(originalUrl, context, resourceCache);
-        } catch (err) {
-          loader.emitError(decl.error(err.message, { word: originalUrl }).toString());
-          continue;
+        // tslint:disable-next-line:no-conditional-assignment
+        while ((match = urlRegex.exec(value))) {
+          const originalUrl = match[1] || match[2] || match[3];
+          let processedUrl;
+          try {
+            processedUrl = await process(originalUrl, context, resourceCache);
+          } catch (err) {
+            loader.emitError(decl.error(err.message, { word: originalUrl }).toString());
+            continue;
+          }
+
+          if (lastIndex < match.index) {
+            segments.push(value.slice(lastIndex, match.index));
+          }
+
+          if (!processedUrl || originalUrl === processedUrl) {
+            segments.push(match[0]);
+          } else {
+            segments.push(wrapUrl(processedUrl));
+            modified = true;
+          }
+
+          lastIndex = match.index + match[0].length;
         }
 
-        if (lastIndex < match.index) {
-          segments.push(value.slice(lastIndex, match.index));
+        if (lastIndex < value.length) {
+          segments.push(value.slice(lastIndex));
         }
 
-        if (!processedUrl || originalUrl === processedUrl) {
-          segments.push(match[0]);
-        } else {
-          segments.push(wrapUrl(processedUrl));
-          modified = true;
+        if (modified) {
+          decl.value = segments.join('');
         }
-
-        lastIndex = match.index + match[0].length;
-      }
-
-      if (lastIndex < value.length) {
-        segments.push(value.slice(lastIndex));
-      }
-
-      if (modified) {
-        decl.value = segments.join('');
-      }
-    }));
+      }),
+    );
   };
 });
 // tslint:disable-next-line: no-namespace

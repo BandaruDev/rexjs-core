@@ -1,4 +1,3 @@
-
 export interface RexBuildOptions {
   version: number;
   project: Project;
@@ -14,7 +13,7 @@ export interface Configuration {
   polyfills: string;
   tsConfig: string;
   hmr?: boolean;
-  ssl?:boolean;
+  ssl?: boolean;
   liveReload?: boolean;
   linting: string;
   optimization: boolean;
@@ -32,18 +31,18 @@ export interface Configuration {
   svgOptions?: SvgOptions;
   externals: Scripts;
   budgets: Budget[];
-};
+}
 export interface PWA {
   sw: string;
-};
+}
 export interface SvgOptions {
   optimize: boolean;
   useSprite: boolean;
   useInline: boolean;
-};
+}
 
 export interface Budget {
-  type: string; 
+  type: string;
   maximumWarning: string;
   maximumError: string;
 }
@@ -53,21 +52,19 @@ export interface Scripts {
   javascript: Attributes[];
 }
 
-export type Attributes = { [attributeName: string]: string | boolean; }
+export type Attributes = { [attributeName: string]: string | boolean };
 
 export interface Project {
   root: string;
   sourceRoot: string;
-};
+}
 
 export function rexBuild(): Promise<RexBuildOptions> {
   return new Promise<RexBuildOptions>((resolve, reject) => {
     try {
-       resolve(import(`${process.cwd()}/rex.json`))
+      resolve(import(`${process.cwd()}/rex.json`));
     } catch (error) {
-      reject("REJECTED");
+      reject('REJECTED');
     }
-  })
-};
-
-
+  });
+}

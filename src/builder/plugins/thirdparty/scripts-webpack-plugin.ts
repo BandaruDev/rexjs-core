@@ -37,9 +37,8 @@ function addDependencies(compilation: any, scripts: string[]): void {
 
 function hook(compiler: any, action: (compilation: any, callback: (err?: Error) => void) => void) {
   compiler.hooks.thisCompilation.tap('scripts-webpack-plugin', (compilation: any) => {
-    compilation.hooks.additionalAssets.tapAsync(
-      'scripts-webpack-plugin',
-      (callback: (err?: Error) => void) => action(compilation, callback),
+    compilation.hooks.additionalAssets.tapAsync('scripts-webpack-plugin', (callback: (err?: Error) => void) =>
+      action(compilation, callback),
     );
   });
 }
@@ -48,11 +47,11 @@ export class ScriptsWebpackPlugin {
   private _lastBuildTime?: number;
   private _cachedOutput?: ScriptOutput;
 
-  constructor(private options: Partial<ScriptsWebpackPluginOptions> = {}) { }
+  constructor(private options: Partial<ScriptsWebpackPluginOptions> = {}) {}
 
   shouldSkip(compilation: any, scripts: string[]): boolean {
     if (this._lastBuildTime == undefined) {
-      console.log(`lat buils:`,this._lastBuildTime)
+      console.log(`lat buils:`, this._lastBuildTime);
       this._lastBuildTime = Date.now();
       return false;
     }

@@ -23,14 +23,10 @@ export interface CleanCssWebpackPluginOptions {
   test: (file: string) => boolean;
 }
 
-function hook(
-  compiler: any,
-  action: (compilation: any, chunks: Array<Chunk>) => Promise<void | void[]>,
-) {
+function hook(compiler: any, action: (compilation: any, chunks: Array<Chunk>) => Promise<void | void[]>) {
   compiler.hooks.compilation.tap('cleancss-webpack-plugin', (compilation: any) => {
-    compilation.hooks.optimizeChunkAssets.tapPromise(
-      'cleancss-webpack-plugin',
-      (chunks: Array<Chunk>) => action(compilation, chunks),
+    compilation.hooks.optimizeChunkAssets.tapPromise('cleancss-webpack-plugin', (chunks: Array<Chunk>) =>
+      action(compilation, chunks),
     );
   });
 }
@@ -41,7 +37,7 @@ export class CleanCssWebpackPlugin {
   constructor(options: Partial<CleanCssWebpackPluginOptions>) {
     this._options = {
       sourceMap: false,
-      test: (file) => file.endsWith('.css'),
+      test: file => file.endsWith('.css'),
       ...options,
     };
   }
@@ -52,8 +48,8 @@ export class CleanCssWebpackPlugin {
         compatibility: 'ie9',
         level: {
           2: {
-            skipProperties: ['transition'] // Fixes #12408
-          }
+            skipProperties: ['transition'], // Fixes #12408
+          },
         },
         inline: false,
         returnPromise: true,
@@ -91,7 +87,7 @@ export class CleanCssWebpackPlugin {
           }
 
           return Promise.resolve()
-            .then(() => map ? cleancss.minify(content, map) : cleancss.minify(content))
+            .then(() => (map ? cleancss.minify(content, map) : cleancss.minify(content)))
             .then((output: any) => {
               let hasWarnings = false;
               if (output.warnings && output.warnings.length > 0) {
@@ -100,8 +96,7 @@ export class CleanCssWebpackPlugin {
               }
 
               if (output.errors && output.errors.length > 0) {
-                output.errors
-                  .forEach((error: string) => compilation.errors.push(new Error(error)));
+                output.errors.forEach((error: string) => compilation.errors.push(new Error(error)));
                 return;
               }
 
@@ -112,13 +107,7 @@ export class CleanCssWebpackPlugin {
 
               let newSource;
               if (output.sourceMap) {
-                newSource = new SourceMapSource(
-                  output.styles,
-                  file,
-                  output.sourceMap.toString(),
-                  content,
-                  map,
-                );
+                newSource = new SourceMapSource(output.styles, file, output.sourceMap.toString(), content, map);
               } else {
                 newSource = new RawSource(output.styles);
               }
