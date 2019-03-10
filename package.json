@@ -1,0 +1,48 @@
+{
+  "name": "@rexjs/core",
+  "version": "1.0.0",
+  "description": "Rexjs-React Framework for Better Scaffolding",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rm -rf lib && tsc -p .",
+    "test": "jest --no-cache --config test/jest-config.json",
+    "format": "prettier --write \"src/**/*.ts\" ",
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BandaruDev/rexjs-core.git"
+  },
+  "keywords": [
+    "rexjs",
+    "rex",
+    "@rexjs",
+    "@rexjs/core",
+    "react",
+    "typescript"
+  ],
+  "author": "@RexDevelopers, India",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BandaruDev/rexjs-core/issues"
+  },
+  "homepage": "https://github.com/BandaruDev/rexjs-core#readme",
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "jest": "^24.3.1",
+    "prettier": "^1.16.4",
+    "ts-jest": "^24.0.0",
+    "tslint": "^5.13.1",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.3.3333"
+  }
+}
