@@ -1,3 +1,1 @@
-export function AppName() {
-    return;
-}
+export * from './public_api';
