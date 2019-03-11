@@ -6,6 +6,10 @@
     "outDir": "lib",
     "esModuleInterop": true,
     "declaration": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "es2018",
+      "dom"
+    ],
   }
 }
