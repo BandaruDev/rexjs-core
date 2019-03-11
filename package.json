@@ -1,13 +1,15 @@
 {
   "name": "rexjs-core",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Rexjs-React Framework for Better Scaffolding",
   "main": "index.js",
   "scripts": {
     "version": "git add -A",
     "postversion": "git push && git push --tags"
   },
-  "files": [""],
+  "files": [
+    ""
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BandaruDev/rexjs-core.git"
