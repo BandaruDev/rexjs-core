@@ -1,13 +1,13 @@
 export * from './rex-plugins';
 export * from './thirdparty';
-import webpack from 'webpack';
+import { ContextReplacementPlugin, Plugin } from 'webpack';
 
 /**
  *
  * @param plugins
  */
-export function registerPlugins(plugins: webpack.Plugin[]): webpack.Plugin[] {
-  const rexPlugins: webpack.Plugin[] = [];
+export function registerPlugins(plugins: Plugin[]): Plugin[] {
+  const rexPlugins: Plugin[] = [];
   plugins.forEach(plugin => rexPlugins.push(plugin));
   return rexPlugins;
 }
@@ -15,7 +15,7 @@ export function registerPlugins(plugins: webpack.Plugin[]): webpack.Plugin[] {
  *
  */
 export const RexPlugins = registerPlugins([
-  new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
+  new ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
   // new webpack.DefinePlugin({
   //     PRODUCTION: JSON.stringify(true),
   //     budget: JSON.stringify('5fa3b9'),
