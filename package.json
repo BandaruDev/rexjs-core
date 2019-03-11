@@ -1,6 +1,6 @@
 {
   "name": "rexjs-core",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Rexjs-React Framework for Better Scaffolding",
   "scripts": {
     "test": "jest --no-cache --config test/jest-config.json",
