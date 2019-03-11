@@ -1,6 +1,6 @@
 {
   "name": "rexjs-core",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Rexjs-React Framework for Better Scaffolding",
   "scripts": {
     "test": "jest --no-cache --config test/jest-config.json",
@@ -8,12 +8,9 @@
     "lint": "tslint -p tsconfig.json",
     "prepublishOnly": "npm run lint",
     "preversion": "npm run lint",
-    "version": "npm run format && git add -A src",
+    "version": "npm run format && git add -A",
     "postversion": "git push && git push --tags"
   },
-  "files": [
-    "src/**/*"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BandaruDev/rexjs-core.git"
