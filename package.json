@@ -5,7 +5,7 @@
   "scripts": {
     "test": "jest --no-cache --config test/jest-config.json",
     "format": "prettier --write \"src/**/*.ts\" ",
-    "lint": "tslint",
+    "lint": "tslint --project",
     "prepublishOnly": "npm run lint",
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
