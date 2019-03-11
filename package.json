@@ -2,12 +2,10 @@
   "name": "rexjs-core",
   "version": "1.0.4",
   "description": "Rexjs-React Framework for Better Scaffolding",
-  "main": "src/index.ts",
   "scripts": {
     "test": "jest --no-cache --config test/jest-config.json",
     "format": "prettier --write \"src/**/*.ts\" ",
     "lint": "tslint -p tsconfig.json",
-    "prepare": "npm run build",
     "prepublishOnly": "npm run lint",
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
@@ -22,10 +20,8 @@
   },
   "keywords": [
     "rexjs",
-    "rex",
-    "@rexjs",
-    "@rexjs/core",
     "react",
+    "webpack",
     "typescript"
   ],
   "author": "@RexDevelopers, India",

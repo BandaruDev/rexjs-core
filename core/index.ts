@@ -1,5 +1,4 @@
 export * from './rex.config';
 export * from './file-checker';
 export * from './build-options';
-// Facilities
-export * from '../facilities/live-reload';
+
