@@ -1,6 +1,6 @@
 {
   "name": "rexjs-core",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Rexjs-React Framework for Better Scaffolding",
   "main": "index.js",
   "scripts": {
